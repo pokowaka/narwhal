@@ -4,15 +4,40 @@ apply plugin: 'eclipse'
 
 buildscript {
     repositories {
-        mavenCentral()
+        maven {
+            url 'http://mubunti.com:8282/artifactory/plugins-release'
+            credentials {
+                username = "pokowaka"
+                password = "zeqwoot"
+            }
+        }
+
     }
     dependencies {
-      classpath 'com.android.tools.build:gradle:1.1.3'
+        //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:+"
+        classpath 'com.android.tools.build:gradle:2.0.0-alpha1'
     }
 }
 
+
 allprojects {
+    apply plugin: "com.jfrog.artifactory"
+
     repositories {
-        mavenCentral()
+        maven {
+            url 'http://mubunti:8282/artifactory/libs-release'
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'http://mubunti:8282/artifactory/plugins-release'  //The base Artifactory URL if not overridden by the publisher/resolver
+    resolve {
+        repository {
+            repoKey = 'libs-release'
+            maven = true
+
+        }
     }
 }
