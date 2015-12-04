@@ -1,15 +1,33 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 23
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        applicationId 'com.yayaway.narwhal'
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
         multiDexEnabled false
+
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        /*
+        The Android Testing Support Library collects analytics to continuously improve the testing
+        experience. More specifically, it uploads a hash of the package name of the application
+        under test for each invocation. If you do not wish to upload this data, you can opt-out by
+        passing the following argument to the test runner: disableAnalytics "true".
+         */
+        testInstrumentationRunnerArguments disableAnalytics: 'true'
+
+        /*
+        Uncomment this to pass custom arguments to AndroidJUnitRunner. If uncommented the
+        custom argument "argument1" will be passed to AndroidJUnitRunner and make
+        AndroidLibraryModuleIntegrationTest fail.
+         */
+        // testInstrumentationRunnerArgument "argument1", "make_test_fail"
     }
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -23,6 +41,24 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+
+        debug {
+            testCoverageEnabled = true
+
+            // Uncomment this to run test against a minified version of the production APK
+            /*
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            testProguardFile 'proguard-test-rules.txt'
+             */
+        }
+    }
+
+    // Always show the result of every unit test, even if it passes.
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+        }
     }
 }
 
@@ -31,13 +67,40 @@ repositories {
 }
 
 dependencies {
-    // compile 'com.android.support:multidex:1.0.0'
     compile 'net.pokowaka.jraw:JRAW:0.7.2'
     compile 'ch.acra:acra:4.6.1'
     compile 'org.slf4j:slf4j-android:1.7.12'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:support-v4:23.1.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:' + rootProject.ext.supportLibVersion
+    compile 'com.android.support:support-v4:' + rootProject.ext.supportLibVersion
+    compile 'com.android.support:recyclerview-v7:' + rootProject.ext.supportLibVersion
+
+    // Dependencies for local unit tests
+    testCompile 'junit:junit:' + rootProject.ext.junitVersion
+    testCompile 'org.mockito:mockito-all:' + rootProject.ext.mockitoVersion
+    testCompile 'org.hamcrest:hamcrest-all:' + rootProject.ext.hamcrestVersion
+
+    // Android Testing Support Library's runner and rules
+    androidTestCompile 'com.android.support.test:runner:' + rootProject.ext.runnerVersion
+    androidTestCompile 'com.android.support.test:rules:' + rootProject.ext.rulesVersion
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    androidTestCompile ('org.mockito:mockito-core:' + rootProject.ext.mockitoVersion) {
+        exclude module: 'hamcrest-core'
+    }
+
+    // Espresso UI Testing
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:' + rootProject.ext.espressoVersion
+
+    // Espresso-Contrib, Intents and Web dependencies are not used in this project.
+    /*
+    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:' + rootProject.ext.espressoVersion
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:' + rootProject.ext.espressoVersion
+    androidTestCompile 'com.android.support.test.espresso:espresso-web:' + rootProject.ext.espressoVersion
+     */
+
+    // UIAutomator Testing. Learn about this dependency in this projects README file.
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:' + rootProject.ext.uiautomatorVersion
 }

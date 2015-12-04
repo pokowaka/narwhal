@@ -1,6 +1,7 @@
 package com.yayaway.narwhal;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import org.slf4j.Logger;
@@ -14,6 +15,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         logger.debug("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
 
