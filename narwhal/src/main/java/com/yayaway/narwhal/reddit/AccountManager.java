@@ -39,7 +39,7 @@ public class AccountManager {
     private final Context mContext;
     private RedditClient mReadOnlyClient;
 
-    public AccountManager(Context context)  {
+    public AccountManager(Context context) {
         this.mContext = context;
     }
 
