@@ -10,9 +10,9 @@ import net.dean.jraw.http.oauth.OAuthData;
  */
 public class NarwhalRedditClient extends RedditClient {
 
-    private final AccountManager manager;
+    private final DefaultAccountManager manager;
 
-    public NarwhalRedditClient(UserAgent userAgent, AccountManager manager) {
+    public NarwhalRedditClient(UserAgent userAgent, DefaultAccountManager manager) {
         super(userAgent);
         this.manager = manager;
     }

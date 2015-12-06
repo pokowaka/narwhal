@@ -32,12 +32,12 @@ import static org.mockito.Mockito.when;
 @SmallTest
 public class AccountManagerTest {
     private Context mContext;
-    private AccountManager mAccountManager;
+    private DefaultAccountManager mAccountManager;
 
     @Before
     public void initTargetContext() {
         mContext = getTargetContext();
-        mAccountManager = new AccountManager(mContext);
+        mAccountManager = new DefaultAccountManager(mContext);
         assertThat(mContext, notNullValue());
         clearSettings();
     }
@@ -45,7 +45,7 @@ public class AccountManagerTest {
     @After
     public void clearSettings() {
         SharedPreferences settings = mContext.getSharedPreferences(
-                AccountManager.ACCOUNT_PREFS, Context.MODE_PRIVATE);
+                DefaultAccountManager.ACCOUNT_PREFS, Context.MODE_PRIVATE);
         settings.edit().clear().commit();
     }
 
@@ -75,9 +75,9 @@ public class AccountManagerTest {
 
     @Test
     public void testGetAccountsAfterAddition() {
-        SharedPreferences settings = mContext.getSharedPreferences(AccountManager.ACCOUNT_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences settings = mContext.getSharedPreferences(DefaultAccountManager.ACCOUNT_PREFS, Context.MODE_PRIVATE);
         settings.edit()
-                .putString(AccountManager.REGISTERED_ACCOUNTS, "a,b,c")
+                .putString(DefaultAccountManager.REGISTERED_ACCOUNTS, "a,b,c")
                 .commit();
 
         Set<String> accounts = mAccountManager.getAccounts();
@@ -145,7 +145,7 @@ public class AccountManagerTest {
         mAccountManager.setActiveUser("user2");
 
         // "Reboot", second instance should fetch from persistent store.
-        AccountManager accountManager2 = new AccountManager(mContext);
+        AccountManager accountManager2 = new DefaultAccountManager(mContext);
         Set<String> accounts = accountManager2.getAccounts();
         assertThat(accounts.size(), is(2));
         assertThat(accountManager2.getActiveUser(), is("user2"));

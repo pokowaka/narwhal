@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.yayaway.narwhal.com.yayaway.narwhal.ui.SquareImageView
+        android:id="@+id/submission_thumbnail"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:padding="2dp"
+        android:src="@drawable/ic_launcher" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.yayaway.narwhal.com.yayaway.narwhal.ui.SubmissionScoreView
+            android:id="@+id/submission_score"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="2dp" />
+
+
+        <TextView
+            android:id="@+id/submission_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="false"
+            android:layout_toLeftOf="@id/submission_score"
+            android:layout_toStartOf="@id/submission_score"
+            android:text="Hey reddit, I had a couple of hours to spare so I painted this star wars painting! What do you think?" />
+
+
+    </RelativeLayout>
+
+</LinearLayout>
+
