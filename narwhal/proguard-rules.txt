@@ -34,3 +34,16 @@ public ** get*();
 
 # Pretty time.
 -keep class org.ocpsoft.prettytime.i18n.**
+
+# Butter knife..
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}

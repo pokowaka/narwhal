@@ -15,9 +15,20 @@ import net.dean.jraw.http.oauth.OAuthData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+
 public class LoginActivity extends Activity {
     private static final Logger logger = LoggerFactory.getLogger(LoginActivity.class);
-    private AccountManager mAccountManager;
+
+    @Inject
+    AccountManager mAccountManager;
+
+    @Bind(R.id.webview)
+    WebView webView;
 
     private void clearCookies() {
         CookieManager cookieManager = CookieManager.getInstance();
@@ -26,11 +37,13 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        logger.info("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
-        mAccountManager = new AccountManager(this);
+        logger.debug("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         setContentView(R.layout.activity_login);
-        WebView webView = (WebView) findViewById(R.id.webview);
+
+        // Inject all the things..
+        NarwhalApplication.from(this).getComponent().inject(this);
+        ButterKnife.bind(this);
 
         final OAuthUserChallengeTask challengeTask = mAccountManager.getOAuthUserChallengeTask();
         challengeTask.addListener(
@@ -65,6 +78,5 @@ public class LoginActivity extends Activity {
             }
         });
     }
-
 }
 
