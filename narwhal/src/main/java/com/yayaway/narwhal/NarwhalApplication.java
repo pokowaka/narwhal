@@ -5,13 +5,15 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.yayaway.narwhal.injection.HasComponent;
-import com.yayaway.narwhal.injection.components.DaggerApplicationComponent;
 import com.yayaway.narwhal.injection.components.ApplicationComponent;
+import com.yayaway.narwhal.injection.components.DaggerApplicationComponent;
 import com.yayaway.narwhal.injection.modules.ApplicationModule;
 
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @ReportsCrashes(
@@ -24,12 +26,18 @@ import org.acra.sender.HttpSender;
 public class NarwhalApplication extends Application implements HasComponent<ApplicationComponent> {
 
     private ApplicationComponent mComponent;
+    private static final Logger logger = LoggerFactory.getLogger(NarwhalApplication.class);
 
     @Override
     public void onCreate() {
-        // The following line triggers the initialization of ACRA
         super.onCreate();
-        ACRA.init(this);
+
+        // Do not initialize acra if we are running unit tests etc..
+        if (NarwhalApplication.class.isAssignableFrom(this.getClass())) {
+            logger.info("Initializing acra.");
+            ACRA.init(this);
+        }
+
         mComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
                 .build();
