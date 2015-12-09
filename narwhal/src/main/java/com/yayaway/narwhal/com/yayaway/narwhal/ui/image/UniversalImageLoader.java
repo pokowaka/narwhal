@@ -6,7 +6,7 @@ import android.widget.ImageView;
 /**
  * Created by erwinj on 12/7/15.
  */
-public class UniversalImageLoader implements ImageLoader {
+public abstract class UniversalImageLoader implements ImageLoader {
 
     public UniversalImageLoader(Context context) {
         initImageLoader(context);

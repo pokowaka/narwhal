@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.yayaway.narwhal.com.yayaway.narwhal.ui.AbstractSubmissionViewFactory;
 import com.yayaway.narwhal.com.yayaway.narwhal.ui.EndlessScrollListener;
 import com.yayaway.narwhal.com.yayaway.narwhal.ui.LinkListener;
 import com.yayaway.narwhal.com.yayaway.narwhal.ui.SubmissionAdapter;
+import com.yayaway.narwhal.com.yayaway.narwhal.ui.SubmissionViewFactory;
+import com.yayaway.narwhal.com.yayaway.narwhal.ui.image.GlideImageLoader;
 import com.yayaway.narwhal.injection.HasComponent;
 import com.yayaway.narwhal.injection.components.DaggerFragmentComponent;
 import com.yayaway.narwhal.injection.components.FragmentComponent;
@@ -56,6 +59,9 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
 
     @Inject
     AccountManager mAccountManager;
+
+    @Inject
+    LinkListener mLinkListener;
 
     @Bind(R.id.submission_listview)
     ListView mSubmissionListView;
@@ -117,9 +123,13 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
         View view = inflater.inflate(R.layout.fragment_submission_list, container, false);
         ButterKnife.bind(this, view);
 
+        AbstractSubmissionViewFactory submissionViewFactory = new SubmissionViewFactory(
+                getContext(),  new GlideImageLoader(this),  mLinkListener);
+
         mAdapter = new SubmissionAdapter(this.getContext(),
                 android.R.layout.simple_list_item_1, submissions);
-        getComponent().inject(mAdapter);
+        mAdapter.setViewFactory(submissionViewFactory);
+
 
         mSubmissionListView.setAdapter(mAdapter);
         mSubmissionListView.setOnScrollListener(new EndlessScrollListener(5) {
@@ -132,12 +142,6 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
             }
         });
 
-        mAdapter.setLinkListener(new LinkListener() {
-            @Override
-            public void onLinkListener(String uri) {
-                mListener.onFragmentInteraction(uri);
-            }
-        });
         refresh();
         return view;
     }

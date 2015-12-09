@@ -53,3 +53,4 @@ public static final org.codehaus.jackson.annotate.JsonAutoDetect$Visibility *; }
     **[] $VALUES;
     public *;
 }
+-keep class com.bumptech.glide.integration.okhttp.OkHttpGlideModule

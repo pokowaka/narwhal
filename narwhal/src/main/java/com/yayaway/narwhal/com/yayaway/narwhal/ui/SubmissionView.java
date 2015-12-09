@@ -4,18 +4,16 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yayaway.narwhal.R;
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.image.ImageLoader;
 
 import net.dean.jraw.models.Submission;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -24,12 +22,9 @@ import butterknife.OnClick;
 /**
  * Created by erwinj on 11/30/15.
  */
-public class SubmissionView extends LinearLayout {
+public class SubmissionView extends AbstractSubmissionView {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionView.class);
-
-    @Inject
-    ImageLoader mImageLoader;
 
     @Bind(R.id.submission_title)
     TextView mTitle;
@@ -38,15 +33,10 @@ public class SubmissionView extends LinearLayout {
     @Bind(R.id.submission_thumbnail)
     SquareImageView mThumbnail;
 
-    private LinkListener mLinkListener;
     private Submission mSubmission;
 
     public SubmissionView(Context context) {
         this(context, null);
-    }
-
-    public void setImageLoader(ImageLoader retriever) {
-        this.mImageLoader = retriever;
     }
 
     public SubmissionView(Context context, AttributeSet attrs) {
@@ -65,10 +55,6 @@ public class SubmissionView extends LinearLayout {
         });
     }
 
-    public void setLinkListener(LinkListener listener) {
-        mLinkListener = listener;
-    }
-
     public void linkClick(View v) {
         if (mLinkListener != null) {
             mLinkListener.onLinkListener(mSubmission.getUrl());
@@ -80,6 +66,11 @@ public class SubmissionView extends LinearLayout {
         if (mLinkListener != null) {
             mLinkListener.onLinkListener(mSubmission.getPermalink());
         }
+    }
+
+    @Override
+    public void setSubmissions(List<Submission> submissions) {
+        setSubmission(submissions.get(0));
     }
 
     public void setSubmission(Submission submission) {

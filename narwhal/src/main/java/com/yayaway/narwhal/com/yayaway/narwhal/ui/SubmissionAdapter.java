@@ -12,6 +12,7 @@ import net.dean.jraw.models.Submission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,8 +28,9 @@ import javax.inject.Inject;
  */
 public class SubmissionAdapter extends ArrayAdapter<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(SubmissionAdapter.class);
-    private final HashMap<Submission, View> mViewMap = new HashMap<>();
-    private LinkListener mLinkListener;
+    private final HashMap<List<Submission>, View> mViewMap = new HashMap<>();
+
+    private AbstractSubmissionViewFactory mViewFactory;
 
     @Inject
     ImageLoader mImageLoader;
@@ -37,31 +39,33 @@ public class SubmissionAdapter extends ArrayAdapter<Submission> {
         super(context, resource, objects);
     }
 
-    public void setLinkListener(LinkListener listener) {
-        mLinkListener = listener;
+    @Override
+    public int getCount() {
+        int count = super.getCount();
+        return count / mViewFactory.getItemsPerRow();
+
     }
 
+    public void setViewFactory(AbstractSubmissionViewFactory viewFactory) {
+        this.mViewFactory = viewFactory;
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Submission submission = getItem(position);
-
-        if (!mViewMap.containsKey(submission)) {
-            SubmissionView submissionView = new SubmissionView(getContext());
-            submissionView.setImageLoader(mImageLoader);
-            submissionView.setSubmission(submission);
-            submissionView.setLinkListener(new LinkListener() {
-                @Override
-                public void onLinkListener(String uri) {
-                    if (mLinkListener != null) {
-                        mLinkListener.onLinkListener(uri);
-                    }
-                }
-            });
-            mViewMap.put(submission, submissionView);
+        List<Submission> submissions = new ArrayList<>();
+        for (int i = 0; i < mViewFactory.getItemsPerRow(); i++) {
+            submissions.add(getItem((position * mViewFactory.getItemsPerRow()) + i));
         }
 
-        return mViewMap.get(submission);
+        if (convertView == null) {
+            logger.info("New view");
+            convertView = mViewFactory.getViewForSubmissions(submissions);
+        } else {
+            logger.info("Reuse view");
+            ((AbstractSubmissionView) convertView).setSubmissions(submissions);
+        }
+
+        return convertView;
     }
 
     @Override

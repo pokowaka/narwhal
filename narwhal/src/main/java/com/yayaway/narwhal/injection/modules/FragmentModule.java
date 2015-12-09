@@ -2,7 +2,7 @@ package com.yayaway.narwhal.injection.modules;
 
 import android.support.v4.app.Fragment;
 
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.image.GlideImageLoader;
+import com.yayaway.narwhal.com.yayaway.narwhal.ui.image.FrescoImageLoader;
 import com.yayaway.narwhal.com.yayaway.narwhal.ui.image.ImageLoader;
 import com.yayaway.narwhal.injection.PerFragment;
 
@@ -22,7 +22,8 @@ public class FragmentModule {
     public FragmentModule(Fragment fragment) {
         // mImageLoader = new UniversalImageLoader(NarwhalApplication.from(fragment.getContext()));
         // mImageLoader = new PicassoImageLoader(fragment.getContext());
-        mImageLoader = new GlideImageLoader(fragment);
+        //mImageLoader = new GlideImageLoader(fragment);
+        mImageLoader = new FrescoImageLoader(fragment);
     }
 
     @PerFragment

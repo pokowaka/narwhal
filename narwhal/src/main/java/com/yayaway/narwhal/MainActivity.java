@@ -40,7 +40,7 @@ public class MainActivity extends FragmentActivity implements SubmissionListFrag
         FragmentManager fragmentManger = getSupportFragmentManager();
         // add
         FragmentTransaction ft = fragmentManger.beginTransaction();
-        ft.add(R.id.listcontainer, SubmissionListFragment.newInstance("pics"));
+        ft.add(R.id.listcontainer, SubmissionListFragment.newInstance("gifs"));
         // alternatively add it with a tag
         // trx.add(R.id.your_placehodler, new YourFragment(), "detail");
         ft.commit();
