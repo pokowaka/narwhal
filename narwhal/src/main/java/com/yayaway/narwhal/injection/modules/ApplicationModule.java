@@ -24,6 +24,11 @@ public class ApplicationModule {
     private final Executor mExecutor;
 
 
+    /**
+     * Provides all the singletons to the application.
+     *
+     * @param application The application to inject this module into.
+     */
     public ApplicationModule(NarwhalApplication application) {
         mApplication = application;
         mAccountManager = new DefaultAccountManager(application);

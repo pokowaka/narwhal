@@ -24,9 +24,9 @@ public class OAuthUserChallengeTask
 
 
     public interface TokenAcquiredListener {
-        void obtainedToken(OAuthData oAuthData);
+        void obtainedToken(OAuthData oauthData);
 
-        void onError(Exception e);
+        void onError(Exception error);
     }
 
     private RedditClient redditClient;
@@ -39,7 +39,8 @@ public class OAuthUserChallengeTask
         this.credentials = creds;
     }
 
-    public OAuthUserChallengeTask(RedditClient redditClient, Credentials creds, TokenAcquiredListener listener) {
+    public OAuthUserChallengeTask(RedditClient redditClient,
+                                  Credentials creds, TokenAcquiredListener listener) {
         this(redditClient, creds);
         addListener(listener);
     }
@@ -68,7 +69,7 @@ public class OAuthUserChallengeTask
         } catch (Exception e) {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
-            logger.error("Failed to authenticate " + e + "strace: " + errors) ;
+            logger.error("Failed to authenticate " + e + "strace: " + errors);
             for (TokenAcquiredListener listener : listeners) {
                 listener.onError(e);
             }

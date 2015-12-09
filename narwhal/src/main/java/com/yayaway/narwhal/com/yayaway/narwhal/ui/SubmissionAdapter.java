@@ -52,9 +52,10 @@ public class SubmissionAdapter extends ArrayAdapter<Submission> {
             submissionView.setSubmission(submission);
             submissionView.setLinkListener(new LinkListener() {
                 @Override
-                public void OnLinkListener(String uri) {
-                    if (mLinkListener != null)
-                        mLinkListener.OnLinkListener(uri);
+                public void onLinkListener(String uri) {
+                    if (mLinkListener != null) {
+                        mLinkListener.onLinkListener(uri);
+                    }
                 }
             });
             mViewMap.put(submission, submissionView);

@@ -43,21 +43,25 @@ public class DefaultAccountManager implements AccountManager {
         this.mContext = context;
         String version = "unknown";
         try {
-            PackageInfo pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
-            version = pInfo.versionName;
+            PackageInfo packageInfo = mContext.getPackageManager().getPackageInfo(mContext
+                    .getPackageName(), 0);
+            version = packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             // Shouldn't happen.
+            logger.error("Couldn't find package name " + e);
         }
         mUserAgent = UserAgent.of("android", "com.yayaway.narwhal", version, "pokowaka");
         mReadOnlyClient = new ReadOnlyRedditClient(mUserAgent);
-        if (BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG) {
             mReadOnlyClient.setLoggingMode(LoggingMode.ALWAYS);
+        }
     }
 
     private RedditClient newClient() {
         RedditClient redditClient = new RedditClient(mUserAgent);
-        if (BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG) {
             redditClient.setLoggingMode(LoggingMode.ALWAYS);
+        }
 
         return redditClient;
     }
@@ -77,7 +81,7 @@ public class DefaultAccountManager implements AccountManager {
         SharedPreferences settings = mContext.getSharedPreferences(ACCOUNT_PREFS, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(DEFAULT_USER, user);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -133,7 +137,8 @@ public class DefaultAccountManager implements AccountManager {
             }
         }
 
-        SharedPreferences settings = mContext.getSharedPreferences(ACCOUNT_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences settings = mContext.getSharedPreferences(ACCOUNT_PREFS, Context
+                .MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.remove(name);
         if (accounts.isEmpty()) {
@@ -141,7 +146,7 @@ public class DefaultAccountManager implements AccountManager {
         } else {
             editor.putString(REGISTERED_ACCOUNTS, TextUtils.join(",", accounts));
         }
-        editor.commit();
+        editor.apply();
         mClientMap.remove(name);
     }
 
@@ -160,11 +165,12 @@ public class DefaultAccountManager implements AccountManager {
         Set<String> accounts = getAccounts();
         accounts.add(name);
 
-        SharedPreferences settings = mContext.getSharedPreferences(ACCOUNT_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences settings = mContext.getSharedPreferences(ACCOUNT_PREFS, Context
+                .MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(name, refresh);
         editor.putString(REGISTERED_ACCOUNTS, TextUtils.join(",", accounts));
-        editor.commit();
+        editor.apply();
 
         // Add it to the open client map
         mClientMap.put(name, redditClient);
@@ -177,7 +183,8 @@ public class DefaultAccountManager implements AccountManager {
 
     @Override
     public Set<String> getAccounts() {
-        SharedPreferences settings = mContext.getSharedPreferences(ACCOUNT_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences settings = mContext.getSharedPreferences(ACCOUNT_PREFS, Context
+                .MODE_PRIVATE);
         String accounts = settings.getString(REGISTERED_ACCOUNTS, null);
         return accounts == null ? new HashSet<String>() :
                 new HashSet<>(Arrays.asList(accounts.split(",")));

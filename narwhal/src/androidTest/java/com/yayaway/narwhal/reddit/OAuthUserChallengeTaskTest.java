@@ -99,7 +99,7 @@ public class OAuthUserChallengeTaskTest {
         assertThat(callback.getoAuthData(), is(notNullValue()));
     }
 
-    private class CallbackListener implements OAuthUserChallengeTask.TokenAcquiredListener {
+    private static class CallbackListener implements OAuthUserChallengeTask.TokenAcquiredListener {
 
         private final CountDownLatch latch;
         private OAuthData oAuthData;

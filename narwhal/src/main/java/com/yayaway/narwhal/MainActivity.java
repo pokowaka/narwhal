@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-public class MainActivity extends FragmentActivity implements SubmissionListFragment.OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements SubmissionListFragment
+        .OnFragmentInteractionListener {
 
     static final Logger logger = LoggerFactory.getLogger(MainActivity.class);
 
@@ -21,7 +22,8 @@ public class MainActivity extends FragmentActivity implements SubmissionListFrag
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        logger.info("onCreate() called with: " +  "savedInstanceState = [" + savedInstanceState + "]");
+        logger.info("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState
+                + "]");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
         reportType = HttpSender.Type.JSON,
         formUri = "http://crash.narwhal.me/acra-narwhal/_design/acra-storage/_update/report",
         formUriBasicAuthLogin = "narwhal",
-        formUriBasicAuthPassword = "f13rc3safe"
-)
+        formUriBasicAuthPassword = "f13rc3safe")
 public class NarwhalApplication extends Application implements HasComponent<ApplicationComponent> {
 
     private ApplicationComponent mComponent;

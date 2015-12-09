@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'findbugs'
+apply plugin: 'si.dlabs.soter'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -69,6 +69,36 @@ android {
 repositories {
     jcenter()
 }
+
+
+soter {
+
+    checkstyle {
+        enabled true
+        uploadReports true
+        showViolations true
+        toolVersion "6.13"
+
+    }
+
+    findbugs {
+        enabled true
+        uploadReports true
+        reportLevel "low"
+    }
+
+    pmd {
+        enabled true
+    }
+
+}
+
+dependencies {
+    checkstyleRules files("${project.rootDir}/config/quality/checkstyle/checkstyle.xml")
+    findbugsRules files("${project.rootDir}/config/quality/findbugs/findbugs-filter.xml")
+    pmdRules files("${project.rootDir}/config/quality/pmd/pmd-ruleset.xml")
+}
+
 
 dependencies {
     apt 'com.google.dagger:dagger-compiler:2.0'

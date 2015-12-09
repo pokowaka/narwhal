@@ -8,12 +8,16 @@ buildscript {
                 password = "zeqwoot"
             }
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:+"
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
         classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath "gradle.plugin.si.dlabs.gradle:soter:1.0.3"
     }
 }
 

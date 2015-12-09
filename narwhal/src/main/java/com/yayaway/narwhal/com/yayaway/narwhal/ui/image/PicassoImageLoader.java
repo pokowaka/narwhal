@@ -8,18 +8,18 @@ import android.widget.ImageView;
  */
 
 public class PicassoImageLoader implements ImageLoader {
-    private Context mContext;
+    //    private Context mContext;
 
     public PicassoImageLoader(Context context) {
-        this.mContext = context;
+        //        this.mContext = context;
     }
 
     @Override
     public void displayThumbnail(String url, ImageView view) {
-//        Picasso.with(mContext)
-//                .load(url)
-//                .resize(50, 50)
-//                .centerCrop()
-//                .into(view);
+        //        Picasso.with(mContext)
+        //                .load(url)
+        //                .resize(50, 50)
+        //                .centerCrop()
+        //                .into(view);
     }
 }

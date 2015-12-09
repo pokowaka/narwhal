@@ -70,14 +70,16 @@ public class SubmissionView extends LinearLayout {
     }
 
     public void linkClick(View v) {
-        if (mLinkListener != null)
-            mLinkListener.OnLinkListener(mSubmission.getUrl());
+        if (mLinkListener != null) {
+            mLinkListener.onLinkListener(mSubmission.getUrl());
+        }
     }
 
     @OnClick(R.id.submission_score)
     public void commentsClick(View view) {
-        if (mLinkListener != null)
-            mLinkListener.OnLinkListener(mSubmission.getPermalink());
+        if (mLinkListener != null) {
+            mLinkListener.onLinkListener(mSubmission.getPermalink());
+        }
     }
 
     public void setSubmission(Submission submission) {

@@ -51,12 +51,15 @@ public class SubmissionScoreView extends LinearLayout {
 
     private void setScoreCommentCount(Integer score, Integer comments, Date created) {
         PrettyTime prettyTime = new PrettyTime(new Date());
-        if (mTextScore != null)
+        if (mTextScore != null) {
             mTextScore.setText("" + score);
-        if (mTextComments != null)
+        }
+        if (mTextComments != null) {
             mTextComments.setText(compactDecimal(comments == null ? 0 : comments));
-        if (mTextAge != null)
+        }
+        if (mTextAge != null) {
             mTextAge.setText(prettyTime.format(created));
+        }
     }
 
 }

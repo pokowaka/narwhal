@@ -11,14 +11,15 @@ import java.util.UUID;
  */
 public class DeviceIdentifier {
 
-    public static String DEVICE_ID = "UNIQUE_DEVICE_ID";
+    private static final String DEVICE_ID = "UNIQUE_DEVICE_ID";
 
     public static UUID getDeviceId(Context ctx) {
         String uuid = "";
 
         // First see if we have a defined android id, this might not be there because
         // Android OEM's don't know what they are doing and the device might have been rooted.
-        if (Settings.Secure.ANDROID_ID != null && !"android_id".equals(Settings.Secure.ANDROID_ID)) {
+        if (Settings.Secure.ANDROID_ID != null
+                && !"android_id".equals(Settings.Secure.ANDROID_ID)) {
             uuid = Settings.Secure.ANDROID_ID;
         }
 
@@ -30,7 +31,7 @@ public class DeviceIdentifier {
                 uuid = UUID.randomUUID().toString();
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString(DEVICE_ID, uuid);
-                editor.commit();
+                editor.apply();
             }
         }
 

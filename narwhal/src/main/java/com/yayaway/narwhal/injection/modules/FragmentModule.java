@@ -1,10 +1,5 @@
 package com.yayaway.narwhal.injection.modules;
 
-
-/**
- * Created by erwinj on 12/7/15.
- */
-
 import android.support.v4.app.Fragment;
 
 import com.yayaway.narwhal.com.yayaway.narwhal.ui.image.GlideImageLoader;
@@ -19,9 +14,14 @@ import dagger.Provides;
 public class FragmentModule {
     private final ImageLoader mImageLoader;
 
+    /**
+     * The module that provides dependency for the lifetime of a fragment.
+     *
+     * @param fragment The fragment for which we want to inject dependencies.
+     */
     public FragmentModule(Fragment fragment) {
-        //mImageLoader = new UniversalImageLoader(NarwhalApplication.from(fragment.getContext()));
-       // mImageLoader = new PicassoImageLoader(fragment.getContext());
+        // mImageLoader = new UniversalImageLoader(NarwhalApplication.from(fragment.getContext()));
+        // mImageLoader = new PicassoImageLoader(fragment.getContext());
         mImageLoader = new GlideImageLoader(fragment);
     }
 

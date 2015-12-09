@@ -94,7 +94,8 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        logger.debug("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+        logger.debug("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState
+                + "]");
         super.onCreate(savedInstanceState);
 
         // Inject all the things..
@@ -110,7 +111,8 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        logger.debug("onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
+        logger.debug("onCreateView() called with: " + "inflater = [" + inflater + "], container ="
+                + " [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_submission_list, container, false);
         ButterKnife.bind(this, view);
@@ -123,7 +125,8 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
         mSubmissionListView.setOnScrollListener(new EndlessScrollListener(5) {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                logger.info("onLoadMore() called with: " + "page = [" + page + "], totalItemsCount = [" + totalItemsCount + "]");
+                logger.info("onLoadMore() called with: " + "page = [" + page + "], "
+                        + "totalItemsCount = [" + totalItemsCount + "]");
                 mExecutor.execute(new FetchNext());
                 return true;
             }
@@ -131,7 +134,7 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
 
         mAdapter.setLinkListener(new LinkListener() {
             @Override
-            public void OnLinkListener(String uri) {
+            public void onLinkListener(String uri) {
                 mListener.onFragmentInteraction(uri);
             }
         });
@@ -166,8 +169,9 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
     }
 
     public void updateSubreddit(String reddit) {
-        if (!this.mPaginator.getSubreddit().equals(reddit))
+        if (!this.mPaginator.getSubreddit().equals(reddit)) {
             this.submissions.clear();
+        }
 
         this.mPaginator.setSubreddit(reddit);
         this.mExecutor.execute(new FetchNext());
@@ -180,16 +184,12 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
     }
 
     public void setSorting(Sorting sort) {
-        if (mPaginator.getSorting() == sort)
+        if (mPaginator.getSorting() == sort) {
             return;
+        }
         mPaginator.setSorting(sort);
         refresh();
     }
-
-//    @OnItemClick(R.id.submission_listview)
-//    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//        logger.info("onItemClick() called with: " + "adapterView = [" + adapterView + "], view = [" + view + "], i = [" + i + "], l = [" + l + "]");
-//    }
 
     @Override
     public FragmentComponent getComponent() {
@@ -215,12 +215,14 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
 
         @Override
         public void run() {
-            logger.info("FetchNext:  Getting next from: " + mPaginator.getSubreddit() + " after page: " + mPaginator.getPageIndex());
+            logger.info("FetchNext:  Getting next from: " + mPaginator.getSubreddit() + " after "
+                    + "page: " + mPaginator.getPageIndex());
             long start = SystemClock.currentThreadTimeMillis();
             final List<Submission> next = mPaginator.next();
-            logger.info("FetchNext: Received " + next.size() + " submissions in: " + (SystemClock.currentThreadTimeMillis() - start) + " ms.");
+            logger.info("FetchNext: Received " + next.size() + " submissions in: " + (SystemClock
+                    .currentThreadTimeMillis() - start) + " ms.");
             Activity act = getActivity();
-            if (act != null)
+            if (act != null) {
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -230,6 +232,7 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
                         mAdapter.notifyDataSetChanged();
                     }
                 });
+            }
         }
     }
 

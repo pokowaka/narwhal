@@ -38,7 +38,8 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        logger.debug("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+        logger.debug("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState
+                + "]");
         setContentView(R.layout.activity_login);
 
         // Inject all the things..
@@ -67,13 +68,15 @@ public class LoginActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                logger.info("onPageStarted() called with: " + "view = [" + view + "], url = [" + url + "], favicon = [" + favicon + "]");
+                logger.info("onPageStarted() called with: " + "view = [" + view + "], url = ["
+                        + url + "], favicon = [" + favicon + "]");
                 if (url.contains("code=")) {
                     // We've detected the redirect URL
                     challengeTask.execute(url);
                 }
                 if (url.contains("error=access_denied")) {
                     // Clearly user doesn't like us.
+                    logger.warn("access_denied! not yet handled");
                 }
             }
         });
