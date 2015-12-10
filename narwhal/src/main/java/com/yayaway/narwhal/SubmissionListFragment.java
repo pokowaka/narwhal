@@ -3,23 +3,21 @@ package com.yayaway.narwhal;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.AbstractSubmissionViewFactory;
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.EndlessScrollListener;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
+import com.yayaway.narwhal.com.yayaway.narwhal.ui.EndlessRecyclerOnScrollListener;
 import com.yayaway.narwhal.com.yayaway.narwhal.ui.LinkListener;
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.SubmissionAdapter;
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.SubmissionViewFactory;
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.image.GlideImageLoader;
+import com.yayaway.narwhal.com.yayaway.narwhal.ui.submissions.SubmissionAdapter;
 import com.yayaway.narwhal.injection.HasComponent;
-import com.yayaway.narwhal.injection.components.DaggerFragmentComponent;
 import com.yayaway.narwhal.injection.components.FragmentComponent;
-import com.yayaway.narwhal.injection.modules.FragmentModule;
 import com.yayaway.narwhal.reddit.AccountManager;
 
 import net.dean.jraw.models.Submission;
@@ -30,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
@@ -48,28 +45,25 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class SubmissionListFragment extends Fragment implements HasComponent<FragmentComponent> {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_SUBREDDIT = "subreddit";
     private static final Logger logger = LoggerFactory.getLogger(SubmissionListFragment.class);
-    private final List<Submission> submissions = new CopyOnWriteArrayList<>();
 
     @Inject
-    Executor mExecutor;
+    Executor executor;
 
     @Inject
-    AccountManager mAccountManager;
+    AccountManager accountManager;
 
     @Inject
-    LinkListener mLinkListener;
+    LinkListener linkListener;
 
     @Bind(R.id.submission_listview)
-    ListView mSubmissionListView;
+    RecyclerView recyclerListView;
 
-    private OnFragmentInteractionListener mListener;
-    private SubredditPaginator mPaginator;
-    private SubmissionAdapter mAdapter;
-    private FragmentComponent mFragmentComponent;
+    private OnFragmentInteractionListener fragmentInteractionListener;
+    private SubredditPaginator subredditPaginator;
+    private SubmissionAdapter submissionAdapter;
+    private FragmentComponent fragmentComponent;
 
     public SubmissionListFragment() {
         // Required empty public constructor
@@ -92,58 +86,53 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
         return fragment;
     }
 
-    private void initializeInjector() {
-        mFragmentComponent = DaggerFragmentComponent.builder()
-                .fragmentModule(new FragmentModule(this))
-                .build();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        logger.debug("onCreate() called with: " + "savedInstanceState = [" + savedInstanceState
-                + "]");
         super.onCreate(savedInstanceState);
 
         // Inject all the things..
         NarwhalApplication.from(this.getContext()).getComponent().inject(this);
-        initializeInjector();
-        mPaginator = new SubredditPaginator(mAccountManager.getActiveClient());
+        subredditPaginator = new SubredditPaginator(accountManager.getActiveClient());
 
         if (getArguments() != null) {
-            mPaginator.setSubreddit(getArguments().getString(ARG_SUBREDDIT));
+            subredditPaginator.setSubreddit(getArguments().getString(ARG_SUBREDDIT));
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        logger.debug("onCreateView() called with: " + "inflater = [" + inflater + "], container ="
-                + " [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_submission_list, container, false);
         ButterKnife.bind(this, view);
 
-        AbstractSubmissionViewFactory submissionViewFactory = new SubmissionViewFactory(
-                getContext(),  new GlideImageLoader(this),  mLinkListener);
-
-        mAdapter = new SubmissionAdapter(this.getContext(),
-                android.R.layout.simple_list_item_1, submissions);
-        mAdapter.setViewFactory(submissionViewFactory);
-
-
-        mSubmissionListView.setAdapter(mAdapter);
-        mSubmissionListView.setOnScrollListener(new EndlessScrollListener(5) {
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                logger.info("onLoadMore() called with: " + "page = [" + page + "], "
-                        + "totalItemsCount = [" + totalItemsCount + "]");
-                mExecutor.execute(new FetchNext());
-                return true;
-            }
-        });
+        constructList();
 
         refresh();
         return view;
+    }
+
+    private void constructList() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        recyclerListView.setLayoutManager(layoutManager);
+
+        ViewPreloadSizeProvider<Submission> preloadSizeProvider =
+                new ViewPreloadSizeProvider<>();
+        submissionAdapter = new SubmissionAdapter(this.getContext(), Glide.with(this),
+                preloadSizeProvider, linkListener);
+        recyclerListView.setAdapter(submissionAdapter);
+
+        RecyclerViewPreloader<Submission> preloader =
+                new RecyclerViewPreloader<>(Glide.with(this), submissionAdapter,
+                        preloadSizeProvider, 4);
+        recyclerListView.addOnScrollListener(preloader);
+        recyclerListView.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int currentPage) {
+                executor.execute(new FetchNext());
+            }
+        });
     }
 
     @Override
@@ -151,7 +140,7 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
         logger.debug("onAttach() called with: " + "context = [" + context + "]");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            fragmentInteractionListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -162,7 +151,7 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
     public void onDetach() {
         logger.debug("onDetach() called with: " + "");
         super.onDetach();
-        mListener = null;
+        fragmentInteractionListener = null;
     }
 
     @Override
@@ -173,31 +162,31 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
     }
 
     public void updateSubreddit(String reddit) {
-        if (!this.mPaginator.getSubreddit().equals(reddit)) {
-            this.submissions.clear();
+        if (!this.subredditPaginator.getSubreddit().equals(reddit)) {
+            submissionAdapter.clear();
         }
 
-        this.mPaginator.setSubreddit(reddit);
-        this.mExecutor.execute(new FetchNext());
+        this.subredditPaginator.setSubreddit(reddit);
+        this.executor.execute(new FetchNext());
     }
 
     public void refresh() {
-        this.submissions.clear();
-        this.mPaginator.reset();
-        this.mExecutor.execute(new FetchNext());
+        this.submissionAdapter.clear();
+        this.subredditPaginator.reset();
+        this.executor.execute(new FetchNext());
     }
 
     public void setSorting(Sorting sort) {
-        if (mPaginator.getSorting() == sort) {
+        if (subredditPaginator.getSorting() == sort) {
             return;
         }
-        mPaginator.setSorting(sort);
+        subredditPaginator.setSorting(sort);
         refresh();
     }
 
     @Override
     public FragmentComponent getComponent() {
-        return mFragmentComponent;
+        return fragmentComponent;
     }
 
     /**
@@ -219,25 +208,16 @@ public class SubmissionListFragment extends Fragment implements HasComponent<Fra
 
         @Override
         public void run() {
-            logger.info("FetchNext:  Getting next from: " + mPaginator.getSubreddit() + " after "
-                    + "page: " + mPaginator.getPageIndex());
-            long start = SystemClock.currentThreadTimeMillis();
-            final List<Submission> next = mPaginator.next();
-            logger.info("FetchNext: Received " + next.size() + " submissions in: " + (SystemClock
-                    .currentThreadTimeMillis() - start) + " ms.");
+            final List<Submission> next = subredditPaginator.next();
             Activity act = getActivity();
             if (act != null) {
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        for (Submission s : next) {
-                            mAdapter.add(s);
-                        }
-                        mAdapter.notifyDataSetChanged();
+                        submissionAdapter.addAll(next);
                     }
                 });
             }
         }
     }
-
 }

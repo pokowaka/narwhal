@@ -1,4 +1,4 @@
-package com.yayaway.narwhal.com.yayaway.narwhal.ui;
+package com.yayaway.narwhal.com.yayaway.narwhal.ui.submissions;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -5,17 +5,17 @@
               android:layout_gravity="fill_horizontal"
               android:orientation="horizontal">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <com.yayaway.narwhal.com.yayaway.narwhal.ui.SquareImageView
         android:id="@+id/gallery_img_left"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_weight="1"
-        android:visibility="invisible"/>
+        android:visibility="visible"/>
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <com.yayaway.narwhal.com.yayaway.narwhal.ui.SquareImageView
         android:id="@+id/gallery_img_right"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_weight="1"
-        android:visibility="invisible"/>
+        android:visibility="visible"/>
 </LinearLayout>

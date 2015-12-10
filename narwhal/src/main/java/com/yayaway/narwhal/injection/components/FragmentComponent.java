@@ -1,7 +1,7 @@
 package com.yayaway.narwhal.injection.components;
 
 
-import com.yayaway.narwhal.com.yayaway.narwhal.ui.SubmissionAdapter;
+import com.yayaway.narwhal.com.yayaway.narwhal.ui.submissions.SubmissionAdapter;
 import com.yayaway.narwhal.injection.PerFragment;
 import com.yayaway.narwhal.injection.modules.FragmentModule;
 

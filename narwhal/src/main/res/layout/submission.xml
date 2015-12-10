@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <com.yayaway.narwhal.com.yayaway.narwhal.ui.SubmissionScoreView
+        <com.yayaway.narwhal.com.yayaway.narwhal.ui.submissions.SubmissionScoreView
             android:id="@+id/submission_score"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
